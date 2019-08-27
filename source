@@ -1,0 +1,74 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+
+using System.IO;
+
+namespace Username_Checker
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string Username = "";
+
+
+            Console.Title = "Username Checker";
+ 
+                Console.WriteLine("Grabbing Usernames From " + System.AppContext.BaseDirectory + @"Usernames.txt");
+
+                string Contents = "";
+
+                using (var Stream = new FileStream(System.AppContext.BaseDirectory + @"Usernames.txt", FileMode.Open, FileAccess.Read))
+                using (var ReadFile = new StreamReader(Stream, Encoding.Default))
+                {
+                    Contents = ReadFile.ReadToEnd();
+                }
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Grabbed Usernames Successfully!");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("Starting...");
+
+
+
+                WebClient wc = new WebClient();
+
+                string[] Current = Contents.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+
+                foreach (string Cur in Current)
+                {
+                    Username = Cur;
+                    dynamic json = JsonConvert.DeserializeObject(wc.DownloadString(string.Format("https://auth.roblox.com/v2/usernames/validate?request.username={0}&request.birthday=04%2F15%2F02&request.context=Signup", Username)));
+
+                    if (json.message == "Username is already in use")
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(Username + " Is Already Taken!");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+                    else if (json.message == "Username is valid")
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(Username + " Is Not Taken!");
+                        Console.ForegroundColor = ConsoleColor.White;
+
+                        File.WriteAllText(System.AppContext.BaseDirectory + @"Unused Usernames.txt", "Username: " + Username + "\n\n");
+                    }
+                }
+
+                wc.Dispose();
+                Console.WriteLine("Web Client Successfuly Disposed!");
+            
+
+
+            Console.Write("Checking Compleated Successfully! \nPress Any Key To Exit...");
+            Console.ReadKey();
+
+        }
+
+    }
+}
