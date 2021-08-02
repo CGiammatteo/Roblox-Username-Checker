@@ -21,7 +21,7 @@ namespace Username_Checker
 
 
 
-            Console.Title = "Username Checker - Created By Gostrondude";
+            Console.Title = "Username Checker";
 
             Console.Write("Type 1 Check Usernames, Or Type 2 To Generate **WORKING** Usernames: ");
             string choice = Console.ReadLine();
@@ -115,7 +115,7 @@ namespace Username_Checker
                         Unused.Add(A.ToString());
                         Correct = Correct + 1;
 
-                        Console.Title = "Username Checker - Created By Gostrondude [" + Correct + "/" + num + "]";
+                        Console.Title = "Username Checker [" + Correct + "/" + num + "]";
 
                     }
                 }
